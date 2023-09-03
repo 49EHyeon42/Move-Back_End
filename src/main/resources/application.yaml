@@ -1,0 +1,19 @@
+logging:
+  level:
+    org:
+      hibernate: info
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/move
+    username: postgres
+    password: '0000'
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
