@@ -12,7 +12,7 @@ public class TestController {
         return "인증 성공";
     }
 
-    @GetMapping("/hello")
+    @GetMapping("/api/hello")
     public String hello() {
         return "Hello, " + SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

@@ -1,9 +1,7 @@
 package dev.ehyeon.move.security.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.ehyeon.move.security.local.EmailPasswordAuthenticationFilter;
-import dev.ehyeon.move.security.local.EmailPasswordAuthenticationProvider;
-import dev.ehyeon.move.security.local.SignInResponse;
+import dev.ehyeon.move.security.local.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -23,10 +21,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final ObjectMapper objectMapper;
     private final EmailPasswordAuthenticationProvider emailPasswordAuthenticationProvider;
+    private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(emailPasswordAuthenticationProvider);
+        auth.authenticationProvider(jwtAuthenticationProvider);
     }
 
     @Override
@@ -37,11 +37,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-//                .and()
-//                .addFilterBefore(new JwtAuthenticationFilterF(
-//                        new AntPathRequestMatcher("/api/signin", HttpMethod.POST.name()), jwtAuthenticationManagerF, objectMapper), UsernamePasswordAuthenticationFilter.class)
-//                .addFilterBefore(new JwtAuthorizationFilterF(jwtAuthorizationProviderF), JwtAuthenticationFilterF.class);
+                .addFilterBefore(getEmailPasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(getJwtAuthenticationFilter(), EmailPasswordAuthenticationFilter.class);
 
         // Authorization
         http
@@ -58,7 +55,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public EmailPasswordAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+    public EmailPasswordAuthenticationFilter getEmailPasswordAuthenticationFilter() throws Exception {
         EmailPasswordAuthenticationFilter emailPasswordAuthenticationFilter = new EmailPasswordAuthenticationFilter(
                 new AntPathRequestMatcher("/api/signin", HttpMethod.POST.name()), authenticationManager(), objectMapper);
 
@@ -68,5 +65,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         });
 
         return emailPasswordAuthenticationFilter;
+    }
+
+    @Bean
+    public JwtAuthenticationFilter getJwtAuthenticationFilter() throws Exception {
+        return new JwtAuthenticationFilter(new AntPathRequestMatcher("/api/**"), authenticationManager());
     }
 }
