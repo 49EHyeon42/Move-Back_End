@@ -22,6 +22,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final ObjectMapper objectMapper;
     private final EmailPasswordAuthenticationProvider emailPasswordAuthenticationProvider;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -38,7 +39,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(getEmailPasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(getJwtAuthenticationFilter(), EmailPasswordAuthenticationFilter.class);
+                .addFilterAfter(getJwtAuthenticationFilter(), EmailPasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(customAuthenticationEntryPoint);
 
         // Authorization
         http
