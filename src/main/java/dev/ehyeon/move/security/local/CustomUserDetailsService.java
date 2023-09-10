@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class EmailPasswordUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
@@ -22,6 +22,6 @@ public class EmailPasswordUserDetailsService implements UserDetailsService {
         Member foundMember = memberRepository.findMemberByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("MEMBER_NOT_FOUND"));
 
-        return new EmailPasswordUserDetails(foundMember.getEmail(), foundMember.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_MEMBER")));
+        return new CustomUserDetails(foundMember.getEmail(), foundMember.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_MEMBER")));
     }
 }

@@ -5,13 +5,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class EmailPasswordUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private final String email;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public EmailPasswordUserDetails(String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(String email, String password, Collection<? extends GrantedAuthority> authorities) {
         this.email = email;
         this.password = password;
         this.authorities = authorities;

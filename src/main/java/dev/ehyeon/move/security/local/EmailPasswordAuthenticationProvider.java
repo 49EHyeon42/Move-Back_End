@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class EmailPasswordAuthenticationProvider implements AuthenticationProvider {
 
-    private final EmailPasswordUserDetailsService emailPasswordUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        UserDetails userDetails = emailPasswordUserDetailsService.loadUserByUsername((String) authentication.getPrincipal());
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername((String) authentication.getPrincipal());
 
         if (!passwordEncoder.matches((String) authentication.getCredentials(), userDetails.getPassword())) {
             throw new UsernameNotFoundException("MEMBER_NOT_FOUND");

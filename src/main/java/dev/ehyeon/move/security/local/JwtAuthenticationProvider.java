@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
-    private final EmailPasswordUserDetailsService emailPasswordUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
     private final JwtProvider jwtProvider;
 
     @Override
@@ -21,7 +21,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         String email = claims.get("jti", String.class);
 
-        UserDetails userDetails = emailPasswordUserDetailsService.loadUserByUsername(email);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
         JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(userDetails.getUsername(), userDetails.getAuthorities());
         jwtAuthenticationToken.setAuthenticated(true);
