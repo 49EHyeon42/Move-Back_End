@@ -52,15 +52,15 @@ public class JwtProvider {
                     .parseClaimsJws(jwt)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            throw new ExpiredJwtAuthenticationException("EXPIRED_JWT");
+            throw new ExpiredJwtAuthenticationException(SecurityErrorCode.EXPIRED_JWT.getMessage());
         } catch (UnsupportedJwtException e) {
-            throw new UnsupportedJwtAuthenticationException("UNSUPPORTED_JWT");
+            throw new UnsupportedJwtAuthenticationException(SecurityErrorCode.UNSUPPORTED_JWT.getMessage());
         } catch (MalformedJwtException e) {
-            throw new MalformedJwtAuthenticationException("MALFORMED_JWT");
+            throw new MalformedJwtAuthenticationException(SecurityErrorCode.MALFORMED_JWT.getMessage());
         } catch (SignatureException e) {
-            throw new SignatureAuthenticationException("BAD_SIGNATURE");
+            throw new SignatureAuthenticationException(SecurityErrorCode.BAD_SIGNATURE.getMessage());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentAuthenticationException("ILLEGAL_ARGUMENT");
+            throw new IllegalArgumentAuthenticationException(SecurityErrorCode.ILLEGAL_ARGUMENT.getMessage());
         }
     }
 }
