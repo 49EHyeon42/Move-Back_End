@@ -1,5 +1,6 @@
 package dev.ehyeon.move.security.local;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class SignInResponse {
 
-    // TODO refactor name
+    @JsonProperty(value = "access token")
     private String accessToken;
 
     public SignInResponse(String jwt) {
