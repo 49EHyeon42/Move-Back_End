@@ -72,6 +72,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtAuthenticationFilter getJwtAuthenticationFilter() throws Exception {
-        return new JwtAuthenticationFilter(new AntPathRequestMatcher("/api/**"), authenticationManager());
+        return new JwtAuthenticationFilter(new AntPathRequestMatcher("/api/**"), authenticationManager(), objectMapper);
     }
 }
