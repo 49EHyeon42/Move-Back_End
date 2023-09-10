@@ -2,6 +2,7 @@ package dev.ehyeon.move.security.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ehyeon.move.security.local.*;
+import dev.ehyeon.move.service.SignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -23,6 +24,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final EmailPasswordAuthenticationProvider emailPasswordAuthenticationProvider;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final SignService signService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -39,7 +41,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(getEmailPasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(getJwtAuthenticationFilter(), EmailPasswordAuthenticationFilter.class)
+                .addFilterAfter(getSignUpFilter(), EmailPasswordAuthenticationFilter.class)
+                .addFilterAfter(getJwtAuthenticationFilter(), SignUpFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(customAuthenticationEntryPoint);
 
@@ -47,7 +50,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/signup").permitAll()
                 .anyRequest().authenticated();
     }
 
@@ -68,6 +70,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         });
 
         return emailPasswordAuthenticationFilter;
+    }
+
+    @Bean
+    public SignUpFilter getSignUpFilter() {
+        return new SignUpFilter(new AntPathRequestMatcher("/api/signup", HttpMethod.POST.name()), objectMapper, signService);
     }
 
     @Bean
