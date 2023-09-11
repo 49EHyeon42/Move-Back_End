@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class EmailPasswordAuthenticationProvider implements AuthenticationProvider {
+public class SignInAuthenticationProvider implements AuthenticationProvider {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoder passwordEncoder;
@@ -27,11 +27,11 @@ public class EmailPasswordAuthenticationProvider implements AuthenticationProvid
 
         String jwt = jwtProvider.createJwt(userDetails.getUsername());
 
-        return new EmailPasswordAuthenticationToken(jwt);
+        return new SignInAuthenticationToken(jwt);
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return EmailPasswordAuthenticationToken.class.isAssignableFrom(authentication);
+        return SignInAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

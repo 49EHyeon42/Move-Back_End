@@ -21,14 +21,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final ObjectMapper objectMapper;
-    private final EmailPasswordAuthenticationProvider emailPasswordAuthenticationProvider;
+    private final SignInAuthenticationProvider signInAuthenticationProvider;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final SignService signService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(emailPasswordAuthenticationProvider);
+        auth.authenticationProvider(signInAuthenticationProvider);
         auth.authenticationProvider(jwtAuthenticationProvider);
     }
 
@@ -41,7 +41,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(getEmailPasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(getSignUpFilter(), EmailPasswordAuthenticationFilter.class)
+                .addFilterAfter(getSignUpFilter(), SignInAuthenticationFilter.class)
                 .addFilterAfter(getJwtAuthenticationFilter(), SignUpFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(customAuthenticationEntryPoint);
@@ -60,16 +60,16 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public EmailPasswordAuthenticationFilter getEmailPasswordAuthenticationFilter() throws Exception {
-        EmailPasswordAuthenticationFilter emailPasswordAuthenticationFilter = new EmailPasswordAuthenticationFilter(
+    public SignInAuthenticationFilter getEmailPasswordAuthenticationFilter() throws Exception {
+        SignInAuthenticationFilter signInAuthenticationFilter = new SignInAuthenticationFilter(
                 new AntPathRequestMatcher("/api/signin", HttpMethod.POST.name()), authenticationManager(), objectMapper);
 
-        emailPasswordAuthenticationFilter.setAuthenticationSuccessHandler((request, response, authentication) -> {
+        signInAuthenticationFilter.setAuthenticationSuccessHandler((request, response, authentication) -> {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getWriter().write(objectMapper.writeValueAsString(new SignInResponse((String) authentication.getPrincipal())));
         });
 
-        return emailPasswordAuthenticationFilter;
+        return signInAuthenticationFilter;
     }
 
     @Bean
