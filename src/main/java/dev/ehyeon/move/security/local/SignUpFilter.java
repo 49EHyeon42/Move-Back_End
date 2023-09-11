@@ -6,7 +6,6 @@ import dev.ehyeon.move.global.ErrorResponse;
 import dev.ehyeon.move.request.SignUpRequest;
 import dev.ehyeon.move.security.exception.DuplicateEmailException;
 import dev.ehyeon.move.service.SignService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -20,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Slf4j
 public class SignUpFilter extends GenericFilterBean {
 
     private final RequestMatcher requestMatcher;
@@ -72,29 +70,20 @@ public class SignUpFilter extends GenericFilterBean {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
-    // TODO add response class or builder
     private void onSignUpFailure(HttpServletResponse response, Exception exception) throws IOException {
         if (exception instanceof MismatchedInputException || exception instanceof IllegalArgumentException) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write(objectMapper.writeValueAsString(
-                    new ErrorResponse(
-                            HttpStatus.BAD_REQUEST.value() + " " + HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                            "ILLEGAL_ARGUMENT")));
+            setResponse(response, HttpStatus.BAD_REQUEST, "ILLEGAL_ARGUMENT");
         } else if (exception instanceof DuplicateEmailException) {
-            response.setStatus(HttpStatus.CONFLICT.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write(objectMapper.writeValueAsString(
-                    new ErrorResponse(
-                            HttpStatus.CONFLICT.value() + " " + HttpStatus.CONFLICT.getReasonPhrase(),
-                            exception.getMessage())));
+            setResponse(response, HttpStatus.CONFLICT, exception.getMessage());
         } else {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write(objectMapper.writeValueAsString(
-                    new ErrorResponse(
-                            HttpStatus.INTERNAL_SERVER_ERROR.value() + " " + HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                            "INTERNAL_SERVER_ERROR")));
+            setResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR");
         }
+    }
+
+    private void setResponse(HttpServletResponse response, HttpStatus httpStatus, String message) throws IOException {
+        response.setStatus(httpStatus.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(objectMapper.writeValueAsString(
+                new ErrorResponse(httpStatus.value() + " " + httpStatus.getReasonPhrase(), message)));
     }
 }
