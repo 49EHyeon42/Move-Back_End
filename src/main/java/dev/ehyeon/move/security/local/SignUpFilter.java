@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import dev.ehyeon.move.global.ErrorResponse;
 import dev.ehyeon.move.security.exception.DuplicateEmailException;
 import dev.ehyeon.move.security.service.SignService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -18,17 +22,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Component
+@RequiredArgsConstructor
 public class SignUpFilter extends GenericFilterBean {
 
-    private final RequestMatcher requestMatcher;
+    private final RequestMatcher requestMatcher = new AntPathRequestMatcher("/api/signup", HttpMethod.POST.name());
     private final ObjectMapper objectMapper;
     private final SignService signService;
-
-    public SignUpFilter(RequestMatcher requestMatcher, ObjectMapper objectMapper, SignService signService) {
-        this.requestMatcher = requestMatcher;
-        this.objectMapper = objectMapper;
-        this.signService = signService;
-    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
