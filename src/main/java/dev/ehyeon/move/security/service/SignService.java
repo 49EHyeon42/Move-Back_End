@@ -36,7 +36,7 @@ public class SignService {
 
     public void signUp(SignUpRequest request) {
         if (memberRepository.existsMemberByEmail(request.getEmail())) {
-            throw new DuplicateEmailException("DUPLICATE_EMAIL");
+            throw new DuplicateEmailException();
         }
 
         memberRepository.save(new Member(request.getEmail(), passwordEncoder.encode(request.getPassword())));
