@@ -1,13 +1,14 @@
 package dev.ehyeon.move.security.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.ehyeon.move.security.local.*;
+import dev.ehyeon.move.security.local.JwtAuthenticationFilter;
+import dev.ehyeon.move.security.local.SignInFilter;
+import dev.ehyeon.move.security.local.SignUpFilter;
 import dev.ehyeon.move.service.SignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -20,13 +21,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final ObjectMapper objectMapper;
-    private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final SignService signService;
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(jwtAuthenticationProvider);
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -62,8 +57,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new SignUpFilter(new AntPathRequestMatcher("/api/signup", HttpMethod.POST.name()), objectMapper, signService);
     }
 
-    @Bean
-    public JwtAuthenticationFilter getJwtAuthenticationFilter() throws Exception {
-        return new JwtAuthenticationFilter(new AntPathRequestMatcher("/api/**"), authenticationManager(), objectMapper);
+    public JwtAuthenticationFilter getJwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(new AntPathRequestMatcher("/api/**"), signService);
     }
 }

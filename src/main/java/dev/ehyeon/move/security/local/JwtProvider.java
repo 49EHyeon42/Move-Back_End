@@ -1,8 +1,8 @@
 package dev.ehyeon.move.security.local;
 
-import dev.ehyeon.move.security.exception.*;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.SignatureException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -45,22 +45,10 @@ public class JwtProvider {
     }
 
     public Claims getClaims(String jwt) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(new SecretKeySpec(DatatypeConverter.parseBase64Binary(jwtPrivateKey), SignatureAlgorithm.HS256.getJcaName()))
-                    .build()
-                    .parseClaimsJws(jwt)
-                    .getBody();
-        } catch (ExpiredJwtException e) {
-            throw new ExpiredJwtAuthenticationException(SecurityErrorCode.EXPIRED_JWT.getMessage());
-        } catch (UnsupportedJwtException e) {
-            throw new UnsupportedJwtAuthenticationException(SecurityErrorCode.UNSUPPORTED_JWT.getMessage());
-        } catch (MalformedJwtException e) {
-            throw new MalformedJwtAuthenticationException(SecurityErrorCode.MALFORMED_JWT.getMessage());
-        } catch (SignatureException e) {
-            throw new SignatureAuthenticationException(SecurityErrorCode.BAD_SIGNATURE.getMessage());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentAuthenticationException(SecurityErrorCode.ILLEGAL_ARGUMENT.getMessage());
-        }
+        return Jwts.parserBuilder()
+                .setSigningKey(new SecretKeySpec(DatatypeConverter.parseBase64Binary(jwtPrivateKey), SignatureAlgorithm.HS256.getJcaName()))
+                .build()
+                .parseClaimsJws(jwt)
+                .getBody();
     }
 }
