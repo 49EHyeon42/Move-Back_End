@@ -1,7 +1,7 @@
 package dev.ehyeon.move.controller;
 
-import dev.ehyeon.move.request.SignUpRequest;
-import dev.ehyeon.move.service.SignService;
+import dev.ehyeon.move.security.local.SignUpRequest;
+import dev.ehyeon.move.security.service.SignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

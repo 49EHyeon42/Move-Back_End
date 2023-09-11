@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import dev.ehyeon.move.global.ErrorResponse;
 import dev.ehyeon.move.security.exception.MemberNotFoundException;
-import dev.ehyeon.move.service.SignService;
+import dev.ehyeon.move.security.service.SignService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.util.matcher.RequestMatcher;

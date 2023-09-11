@@ -1,4 +1,4 @@
-package dev.ehyeon.move.request;
+package dev.ehyeon.move.security.local;
 
 
 import lombok.AccessLevel;

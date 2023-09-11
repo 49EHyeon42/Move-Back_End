@@ -1,7 +1,7 @@
 package dev.ehyeon.move.security.local;
 
 import dev.ehyeon.move.security.exception.MemberNotFoundException;
-import dev.ehyeon.move.service.SignService;
+import dev.ehyeon.move.security.service.SignService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;

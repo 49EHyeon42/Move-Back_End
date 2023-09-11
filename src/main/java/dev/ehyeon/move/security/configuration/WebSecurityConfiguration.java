@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ehyeon.move.security.local.JwtAuthenticationFilter;
 import dev.ehyeon.move.security.local.SignInFilter;
 import dev.ehyeon.move.security.local.SignUpFilter;
-import dev.ehyeon.move.service.SignService;
+import dev.ehyeon.move.security.service.SignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;

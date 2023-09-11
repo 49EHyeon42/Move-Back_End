@@ -1,8 +1,8 @@
-package dev.ehyeon.move.service;
+package dev.ehyeon.move.security.service;
 
 import dev.ehyeon.move.entity.Member;
 import dev.ehyeon.move.repository.MemberRepository;
-import dev.ehyeon.move.request.SignUpRequest;
+import dev.ehyeon.move.security.local.SignUpRequest;
 import dev.ehyeon.move.security.exception.DuplicateEmailException;
 import dev.ehyeon.move.security.exception.MemberNotFoundException;
 import dev.ehyeon.move.security.local.JwtAuthenticationToken;
