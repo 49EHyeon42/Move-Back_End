@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class SignInRequest {
 
-    // TODO validation
     private String email;
     private String password;
 

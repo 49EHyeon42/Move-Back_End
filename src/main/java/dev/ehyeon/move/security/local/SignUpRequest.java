@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class SignUpRequest {
 
-    // TODO validation
     private String email;
     private String password;
 

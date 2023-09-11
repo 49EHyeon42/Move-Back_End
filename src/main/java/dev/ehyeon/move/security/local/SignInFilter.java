@@ -28,6 +28,7 @@ public class SignInFilter extends GenericFilterBean {
 
     private final RequestMatcher requestMatcher = new AntPathRequestMatcher("/api/signin", HttpMethod.POST.name());
     private final ObjectMapper objectMapper;
+    private final SignRequestValidation signRequestValidation;
     private final SignService signService;
 
     @Override
@@ -55,13 +56,9 @@ public class SignInFilter extends GenericFilterBean {
     }
 
     private void validateSignInRequest(SignInRequest request) {
-        if (validateString(request.getEmail()) || validateString(request.getPassword())) {
+        if (!signRequestValidation.validateEmail(request.getEmail()) || !signRequestValidation.validatePassword(request.getEmail())) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private boolean validateString(String string) {
-        return string == null || string.isBlank();
     }
 
     private void onSignInSuccess(HttpServletResponse response, String jwt) throws IOException {
