@@ -71,13 +71,12 @@ public class SignInFilter extends GenericFilterBean {
     }
 
     private void onSignInFailure(HttpServletResponse response, Exception exception) throws IOException {
-        // TODO 양식 맞추기
         if (exception instanceof MismatchedInputException || exception instanceof IllegalArgumentException) {
-            setResponse(response, HttpStatus.BAD_REQUEST, "BAD_REQUEST");
+            setResponse(response, HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
         } else if (exception instanceof MemberNotFoundException) {
             setResponse(response, HttpStatus.UNAUTHORIZED, exception.getMessage());
         } else {
-            setResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR");
+            setResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         }
     }
 

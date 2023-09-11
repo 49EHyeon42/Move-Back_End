@@ -71,11 +71,11 @@ public class SignUpFilter extends GenericFilterBean {
 
     private void onSignUpFailure(HttpServletResponse response, Exception exception) throws IOException {
         if (exception instanceof MismatchedInputException || exception instanceof IllegalArgumentException) {
-            setResponse(response, HttpStatus.BAD_REQUEST, "ILLEGAL_ARGUMENT");
+            setResponse(response, HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
         } else if (exception instanceof DuplicateEmailException) {
             setResponse(response, HttpStatus.CONFLICT, exception.getMessage());
         } else {
-            setResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR");
+            setResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         }
     }
 
