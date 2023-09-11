@@ -1,21 +1,18 @@
-package dev.ehyeon.move.security.service;
+package dev.ehyeon.move.security.local;
 
 import dev.ehyeon.move.entity.Member;
 import dev.ehyeon.move.repository.MemberRepository;
-import dev.ehyeon.move.security.local.SignUpRequest;
 import dev.ehyeon.move.security.exception.DuplicateEmailException;
 import dev.ehyeon.move.security.exception.MemberNotFoundException;
-import dev.ehyeon.move.security.local.JwtAuthenticationToken;
-import dev.ehyeon.move.security.local.JwtProvider;
-import dev.ehyeon.move.security.local.SignInRequest;
+import dev.ehyeon.move.security.local.jwt.JwtAuthenticationToken;
+import dev.ehyeon.move.security.local.signin.SignInRequest;
+import dev.ehyeon.move.security.local.signup.SignUpRequest;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SignService {

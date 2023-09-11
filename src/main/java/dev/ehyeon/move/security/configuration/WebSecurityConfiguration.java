@@ -1,8 +1,8 @@
 package dev.ehyeon.move.security.configuration;
 
-import dev.ehyeon.move.security.local.JwtAuthenticationFilter;
-import dev.ehyeon.move.security.local.SignInFilter;
-import dev.ehyeon.move.security.local.SignUpFilter;
+import dev.ehyeon.move.security.local.jwt.JwtAuthenticationFilter;
+import dev.ehyeon.move.security.local.signin.SignInFilter;
+import dev.ehyeon.move.security.local.signup.SignUpFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;

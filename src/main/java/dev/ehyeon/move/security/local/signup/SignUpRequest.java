@@ -1,4 +1,4 @@
-package dev.ehyeon.move.security.local;
+package dev.ehyeon.move.security.local.signup;
 
 
 import lombok.AccessLevel;

@@ -1,4 +1,4 @@
-package dev.ehyeon.move.security.local;
+package dev.ehyeon.move.security.local.jwt;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
