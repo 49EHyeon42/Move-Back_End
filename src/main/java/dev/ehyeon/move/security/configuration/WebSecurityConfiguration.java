@@ -21,7 +21,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final ObjectMapper objectMapper;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final SignService signService;
 
     @Override
@@ -39,9 +38,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(getSignInFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(getSignUpFilter(), SignInFilter.class)
-                .addFilterAfter(getJwtAuthenticationFilter(), SignUpFilter.class)
-                .exceptionHandling()
-                .authenticationEntryPoint(customAuthenticationEntryPoint);
+                .addFilterAfter(getJwtAuthenticationFilter(), SignUpFilter.class);
 
         // Authorization
         http
