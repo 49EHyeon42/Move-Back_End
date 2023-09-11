@@ -6,7 +6,6 @@ import dev.ehyeon.move.service.SignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,14 +20,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final ObjectMapper objectMapper;
-    private final SignInAuthenticationProvider signInAuthenticationProvider;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final SignService signService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(signInAuthenticationProvider);
         auth.authenticationProvider(jwtAuthenticationProvider);
     }
 
@@ -40,8 +37,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(getEmailPasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(getSignUpFilter(), SignInAuthenticationFilter.class)
+                .addFilterBefore(getSignInFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(getSignUpFilter(), SignInFilter.class)
                 .addFilterAfter(getJwtAuthenticationFilter(), SignUpFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(customAuthenticationEntryPoint);
@@ -59,17 +56,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManager();
     }
 
-    @Bean
-    public SignInAuthenticationFilter getEmailPasswordAuthenticationFilter() throws Exception {
-        SignInAuthenticationFilter signInAuthenticationFilter = new SignInAuthenticationFilter(
-                new AntPathRequestMatcher("/api/signin", HttpMethod.POST.name()), authenticationManager(), objectMapper);
-
-        signInAuthenticationFilter.setAuthenticationSuccessHandler((request, response, authentication) -> {
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write(objectMapper.writeValueAsString(new SignInResponse((String) authentication.getPrincipal())));
-        });
-
-        return signInAuthenticationFilter;
+    public SignInFilter getSignInFilter() {
+        return new SignInFilter(new AntPathRequestMatcher("/api/signin", HttpMethod.POST.name()), objectMapper, signService);
     }
 
     @Bean
