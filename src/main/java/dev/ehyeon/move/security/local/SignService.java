@@ -1,6 +1,7 @@
 package dev.ehyeon.move.security.local;
 
 import dev.ehyeon.move.entity.Member;
+import dev.ehyeon.move.entity.Role;
 import dev.ehyeon.move.repository.MemberRepository;
 import dev.ehyeon.move.security.exception.DuplicateEmailException;
 import dev.ehyeon.move.security.exception.MemberNotFoundException;
@@ -10,8 +11,11 @@ import dev.ehyeon.move.security.local.signup.SignUpRequest;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +40,7 @@ public class SignService {
             throw new DuplicateEmailException();
         }
 
-        memberRepository.save(new Member(request.getEmail(), passwordEncoder.encode(request.getPassword())));
+        memberRepository.save(new Member(request.getEmail(), passwordEncoder.encode(request.getPassword()), Role.MEMBER));
     }
 
     public Authentication authenticateMemberByJwt(String jwt) {
@@ -46,6 +50,6 @@ public class SignService {
 
         Member foundMember = memberRepository.findMemberByEmail(email).orElseThrow(MemberNotFoundException::new);
 
-        return new JwtAuthenticationToken(foundMember.getEmail());
+        return new JwtAuthenticationToken(foundMember.getEmail(), List.of(new SimpleGrantedAuthority(foundMember.getRole().getRole())));
     }
 }
