@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### KEY ###
+src/main/resources/application-jwt.yaml
