@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,7 +22,7 @@ public class Record {
     private Member member;
 
     @Column(nullable = false)
-    private Date savedDate;
+    private LocalDateTime savedDate;
 
     @ColumnDefault("0")
     private int elapsedTime;
@@ -39,7 +39,7 @@ public class Record {
     @ColumnDefault("0")
     private float calorieConsumption;
 
-    public Record(Member member, Date savedDate, int elapsedTime, int totalTravelDistance, float averageSpeed, int step, float calorieConsumption) {
+    public Record(Member member, LocalDateTime savedDate, int elapsedTime, int totalTravelDistance, float averageSpeed, int step, float calorieConsumption) {
         this.member = member;
         this.savedDate = savedDate;
         this.elapsedTime = elapsedTime;

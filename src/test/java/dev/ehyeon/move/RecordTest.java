@@ -14,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -34,13 +36,13 @@ public class RecordTest {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         recordRepository.save(
-                new Record(savedMember, format.parse("2000-01-01 01:00:00"), 1, 1, 1, 1, 1));
+                new Record(savedMember, dateToLocalDateTime(format.parse("2000-01-01 01:00:00")), 1, 1, 1, 1, 1));
 
         recordRepository.save(
-                new Record(savedMember, format.parse("2000-01-01 02:00:00"), 2, 2, 2, 2, 2));
+                new Record(savedMember, dateToLocalDateTime(format.parse("2000-01-01 02:00:00")), 2, 2, 2, 2, 2));
 
         recordRepository.save(
-                new Record(savedMember, format.parse("2000-01-01 03:00:00"), 3, 3, 3, 3, 3));
+                new Record(savedMember, dateToLocalDateTime(format.parse("2000-01-01 03:00:00")), 3, 3, 3, 3, 3));
     }
 
     @Test
@@ -50,7 +52,7 @@ public class RecordTest {
                 .orElseThrow(MemberNotFoundException::new);
 
         recordRepository.save(
-                new Record(foundMember, new Date(), 1, 1, 1, 1, 1));
+                new Record(foundMember, dateToLocalDateTime(new Date()), 1, 1, 1, 1, 1));
 
         // findAllRecordByMember
         List<Record> foundRecords = recordRepository.findAllRecordByMemberId(foundMember.getId());
@@ -69,10 +71,15 @@ public class RecordTest {
 
         List<Record> foundRecords = recordRepository.findAllRecordByMemberIdAndSavedDateBetween(
                 foundMember.getId(),
-                format.parse("2000-01-01 01:00:00"), format.parse("2000-01-01 02:00:00"));
+                dateToLocalDateTime(format.parse("2000-01-01 01:00:00")),
+                dateToLocalDateTime(format.parse("2000-01-01 02:00:00")));
 
         for (Record foundRecord : foundRecords) {
             System.out.println("found record: date = " + foundRecord.getSavedDate());
         }
+    }
+
+    private LocalDateTime dateToLocalDateTime(Date date) {
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 }
