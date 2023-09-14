@@ -15,8 +15,11 @@ import java.util.Map;
 @Component
 public class JwtProvider {
 
-    private static final String ISSUER = "Move";
-    private static final int EXPIRATION_TIME = 1 * 60 * 1000;
+    @Value("${jwt.issuer}")
+    private String issuer;
+
+    @Value("${jwt.expiration-time}")
+    private int expirationTime;
 
     @Value("${jwt.private-key}")
     private String jwtPrivateKey;
@@ -27,10 +30,10 @@ public class JwtProvider {
         header.put("alg", SignatureAlgorithm.HS256.getValue());
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("iss", ISSUER);
+        claims.put("iss", issuer);
 
         Date date = new Date();
-        date.setTime(date.getTime() + EXPIRATION_TIME);
+        date.setTime(date.getTime() + expirationTime);
         claims.put("exp", date);
 
         claims.put("iat", new Date());
