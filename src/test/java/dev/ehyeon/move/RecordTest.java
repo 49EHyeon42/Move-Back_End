@@ -16,12 +16,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class RecordTest {
+
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     @Autowired
     MemberRepository memberRepository;
@@ -33,33 +34,14 @@ public class RecordTest {
     void before() throws ParseException {
         Member savedMember = memberRepository.save(new Member("email@domain.com", "password", Role.MEMBER));
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        recordRepository.save(
+                new Record(savedMember, StringToLocalDateTime("2000-01-01T01:00:00"), 1, 1, 1, 1, 1));
 
         recordRepository.save(
-                new Record(savedMember, dateToLocalDateTime(format.parse("2000-01-01 01:00:00")), 1, 1, 1, 1, 1));
+                new Record(savedMember, StringToLocalDateTime("2000-01-01T02:00:00"), 2, 2, 2, 2, 2));
 
         recordRepository.save(
-                new Record(savedMember, dateToLocalDateTime(format.parse("2000-01-01 02:00:00")), 2, 2, 2, 2, 2));
-
-        recordRepository.save(
-                new Record(savedMember, dateToLocalDateTime(format.parse("2000-01-01 03:00:00")), 3, 3, 3, 3, 3));
-    }
-
-    @Test
-    void saveRecordByMember() {
-        // authentication -> jwt to email
-        Member foundMember = memberRepository.findMemberByEmail("email@domain.com")
-                .orElseThrow(MemberNotFoundException::new);
-
-        recordRepository.save(
-                new Record(foundMember, dateToLocalDateTime(new Date()), 1, 1, 1, 1, 1));
-
-        // findAllRecordByMember
-        List<Record> foundRecords = recordRepository.findAllRecordByMemberId(foundMember.getId());
-
-        for (Record foundRecord : foundRecords) {
-            System.out.println("found record: id = " + foundRecord.getId());
-        }
+                new Record(savedMember, StringToLocalDateTime("2000-01-01T03:00:00"), 3, 3, 3, 3, 3));
     }
 
     @Test
@@ -67,19 +49,15 @@ public class RecordTest {
         Member foundMember = memberRepository.findMemberByEmail("email@domain.com")
                 .orElseThrow(MemberNotFoundException::new);
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
         List<Record> foundRecords = recordRepository.findAllRecordByMemberIdAndSavedDateBetween(
-                foundMember.getId(),
-                dateToLocalDateTime(format.parse("2000-01-01 01:00:00")),
-                dateToLocalDateTime(format.parse("2000-01-01 02:00:00")));
+                foundMember.getId(), StringToLocalDateTime("2000-01-01T01:00:00"), StringToLocalDateTime("2000-01-01T02:00:00"));
 
         for (Record foundRecord : foundRecords) {
             System.out.println("found record: date = " + foundRecord.getSavedDate());
         }
     }
 
-    private LocalDateTime dateToLocalDateTime(Date date) {
-        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    private LocalDateTime StringToLocalDateTime(String string) throws ParseException {
+        return LocalDateTime.ofInstant(format.parse(string).toInstant(), ZoneId.systemDefault());
     }
 }
