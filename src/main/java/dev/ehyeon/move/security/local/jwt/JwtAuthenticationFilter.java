@@ -1,5 +1,6 @@
 package dev.ehyeon.move.security.local.jwt;
 
+import dev.ehyeon.move.security.exception.ExpiredSignInMemberException;
 import dev.ehyeon.move.security.exception.MemberNotFoundException;
 import dev.ehyeon.move.security.local.SignService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -49,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException |
-                 SignatureException | IllegalArgumentException | MemberNotFoundException ignored) {
+                 SignatureException | IllegalArgumentException | ExpiredSignInMemberException | MemberNotFoundException ignored) {
         }
 
         filterChain.doFilter(request, response);
