@@ -1,5 +1,8 @@
 package dev.ehyeon.move.security.local.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.ehyeon.move.global.ErrorResponse;
+import dev.ehyeon.move.security.exception.ExpiredSignInMemberException;
 import dev.ehyeon.move.security.exception.MemberNotFoundException;
 import dev.ehyeon.move.security.local.SignService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -8,6 +11,8 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -27,6 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final RequestMatcher requestMatcher = new AntPathRequestMatcher("/api/**");
     private final SignService signService;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+            setResponse(response, "Bad Authorization");
             return;
         }
 
@@ -49,9 +55,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException |
-                 SignatureException | IllegalArgumentException | MemberNotFoundException ignored) {
+                 SignatureException | IllegalArgumentException | ExpiredSignInMemberException |
+                 MemberNotFoundException exception) {
+            setResponse(response, exception.getMessage());
+            return;
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void setResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(objectMapper.writeValueAsString(
+                new ErrorResponse(HttpStatus.UNAUTHORIZED.value() + " " + HttpStatus.UNAUTHORIZED.getReasonPhrase(), message)));
     }
 }
