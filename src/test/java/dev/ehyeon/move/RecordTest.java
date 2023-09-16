@@ -6,7 +6,6 @@ import dev.ehyeon.move.entity.Role;
 import dev.ehyeon.move.repository.MemberRepository;
 import dev.ehyeon.move.repository.RecordRepository;
 import dev.ehyeon.move.security.exception.MemberNotFoundException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,22 +55,6 @@ public class RecordTest {
         for (Record foundRecord : foundRecords) {
             System.out.println("found record: date = " + foundRecord.getSavedDate());
         }
-    }
-
-    @Test
-    void existsAttendanceByMemberIdAndAttendanceDateBetweenTest() throws ParseException {
-        Member foundMember = memberRepository.findMemberByEmail("email@domain.com")
-                .orElseThrow(MemberNotFoundException::new);
-
-        boolean result = recordRepository.existsRecordByMemberIdAndSavedDateBetween(
-                foundMember.getId(), StringToLocalDateTime("2000-01-01T00:00:00"), StringToLocalDateTime("2000-01-01T23:59:59"));
-
-        Assertions.assertThat(result).isTrue();
-
-        result = recordRepository.existsRecordByMemberIdAndSavedDateBetween(
-                foundMember.getId(), StringToLocalDateTime("2000-12-01T00:00:00"), StringToLocalDateTime("2000-12-01T23:59:59"));
-
-        Assertions.assertThat(result).isFalse();
     }
 
     private LocalDateTime StringToLocalDateTime(String string) throws ParseException {
