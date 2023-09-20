@@ -34,6 +34,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/move_stop").permitAll()
                 .anyRequest().authenticated();
     }
 }
