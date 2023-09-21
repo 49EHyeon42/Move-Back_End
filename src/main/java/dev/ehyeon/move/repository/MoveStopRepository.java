@@ -8,4 +8,6 @@ import java.util.List;
 public interface MoveStopRepository extends JpaRepository<MoveStop, Long> {
 
     List<MoveStop> findMoveStopByAddress(String address);
+
+    List<MoveStop> findMoveStopByLatitudeBetweenAndLongitudeBetween(double latitude1, double latitude2, double longitude1, double longitude2);
 }
