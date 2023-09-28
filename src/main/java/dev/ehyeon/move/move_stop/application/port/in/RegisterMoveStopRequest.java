@@ -1,6 +1,7 @@
-package dev.ehyeon.move.request;
+package dev.ehyeon.move.move_stop.application.port.in;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
 public class RegisterMoveStopRequest {
 
@@ -22,11 +24,4 @@ public class RegisterMoveStopRequest {
 
     @NotNull
     private Double longitude;
-
-    public RegisterMoveStopRequest(String name, String address, Double latitude, Double longitude) {
-        this.name = name;
-        this.address = address;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
 }
