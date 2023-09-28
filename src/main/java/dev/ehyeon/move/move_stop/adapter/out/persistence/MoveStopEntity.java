@@ -1,18 +1,16 @@
-package dev.ehyeon.move.entity;
+package dev.ehyeon.move.move_stop.adapter.out.persistence;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "move_stop")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class MoveStop {
+public class MoveStopEntity {
 
     @Id
     @GeneratedValue
@@ -30,7 +28,7 @@ public class MoveStop {
     @Column(nullable = false)
     private double longitude;
 
-    public MoveStop(String name, String address, double latitude, double longitude) {
+    public MoveStopEntity(String name, String address, double latitude, double longitude) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
