@@ -12,4 +12,6 @@ public class MoveStop {
     private final String address;
     private final double latitude;
     private final double longitude;
+    private int earnMileage;
+    private int cooldownTime;
 }

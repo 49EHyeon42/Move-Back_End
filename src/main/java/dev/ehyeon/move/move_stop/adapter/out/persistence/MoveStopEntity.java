@@ -28,10 +28,18 @@ public class MoveStopEntity {
     @Column(nullable = false)
     private double longitude;
 
-    public MoveStopEntity(String name, String address, double latitude, double longitude) {
+    @Column(nullable = false)
+    private int earnMileage;
+
+    @Column(nullable = false)
+    private int cooldownTime;
+
+    public MoveStopEntity(String name, String address, double latitude, double longitude, int earnMileage, int cooldownTime) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.earnMileage = earnMileage;
+        this.cooldownTime = cooldownTime;
     }
 }

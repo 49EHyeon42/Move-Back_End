@@ -17,8 +17,8 @@ public class MoveStopAdapter implements RegisterMoveStopPort, SearchMoveStopPort
     private final MoveStopMapper moveStopMapper;
 
     @Override
-    public MoveStop registerMoveStop(String name, String address, double latitude, double longitude) {
-        MoveStopEntity savedMoveStopEntity = moveStopRepository.save(new MoveStopEntity(name, address, latitude, longitude));
+    public MoveStop registerMoveStop(String name, String address, double latitude, double longitude, int earnMileage, int cooldownTime) {
+        MoveStopEntity savedMoveStopEntity = moveStopRepository.save(new MoveStopEntity(name, address, latitude, longitude, earnMileage, cooldownTime));
 
         return moveStopMapper.mapMoveStopEntityToMoveStop(savedMoveStopEntity);
     }

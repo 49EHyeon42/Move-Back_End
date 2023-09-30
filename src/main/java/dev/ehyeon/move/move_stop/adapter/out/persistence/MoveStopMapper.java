@@ -12,6 +12,8 @@ class MoveStopMapper {
                 moveStopEntity.getName(),
                 moveStopEntity.getAddress(),
                 moveStopEntity.getLatitude(),
-                moveStopEntity.getLongitude());
+                moveStopEntity.getLongitude(),
+                moveStopEntity.getEarnMileage(),
+                moveStopEntity.getCooldownTime());
     }
 }

@@ -24,4 +24,10 @@ public class RegisterMoveStopRequest {
 
     @NotNull
     private Double longitude;
+
+    @NotNull
+    private Integer earnMileage;
+
+    @NotNull
+    private Integer cooldownTime;
 }

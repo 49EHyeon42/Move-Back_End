@@ -17,13 +17,23 @@ public class RegisterMoveStopService implements RegisterMoveStopUseCase {
     @Override
     public RegisterMoveStopResponse registerMoveStop(RegisterMoveStopRequest request) {
         MoveStop registeredMoveStop = port.registerMoveStop(
-                request.getName(), request.getAddress(), request.getLatitude(), request.getLongitude());
+                request.getName(),
+                request.getAddress(),
+                request.getLatitude(),
+                request.getLongitude(),
+                request.getEarnMileage(),
+                request.getCooldownTime());
 
         return mapMoveStopToRegisterMoveStopResponse(registeredMoveStop);
     }
 
     private RegisterMoveStopResponse mapMoveStopToRegisterMoveStopResponse(MoveStop moveStop) {
         return new RegisterMoveStopResponse(
-                moveStop.getName(), moveStop.getAddress(), moveStop.getLatitude(), moveStop.getLongitude());
+                moveStop.getName(),
+                moveStop.getAddress(),
+                moveStop.getLatitude(),
+                moveStop.getLongitude(),
+                moveStop.getEarnMileage(),
+                moveStop.getCooldownTime());
     }
 }
