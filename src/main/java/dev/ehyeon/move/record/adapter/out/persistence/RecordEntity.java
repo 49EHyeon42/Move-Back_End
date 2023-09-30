@@ -1,5 +1,6 @@
-package dev.ehyeon.move.entity;
+package dev.ehyeon.move.record.adapter.out.persistence;
 
+import dev.ehyeon.move.entity.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Record {
+public class RecordEntity {
 
     @Id
     @GeneratedValue
@@ -39,7 +40,7 @@ public class Record {
     @ColumnDefault("0")
     private float calorieConsumption;
 
-    public Record(Member member, LocalDateTime savedDate, int elapsedTime, int totalTravelDistance, float averageSpeed, int step, float calorieConsumption) {
+    public RecordEntity(Member member, LocalDateTime savedDate, int elapsedTime, int totalTravelDistance, float averageSpeed, int step, float calorieConsumption) {
         this.member = member;
         this.savedDate = savedDate;
         this.elapsedTime = elapsedTime;
