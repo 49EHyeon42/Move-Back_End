@@ -21,6 +21,7 @@ public class DBInitializer {
     @PostConstruct
     public void postConstruct() {
         memberRepository.save(new Member("qa@domain.com", "$2a$10$BprIgyxGevnVlQmGSUVtjuZT7vSBc7MxlvpUTZFBz9AxXmW3sL0ie", Role.MEMBER));
+        memberRepository.save(new Member("qa2@domain.com", "$2a$10$TjvvT6xN97m1tm9Z8XTGKu4uRLPxXLQK.doIcRnVzKyhZGuyIhuJy", Role.MEMBER));
 
         registerMoveStopService.registerMoveStop(new RegisterMoveStopRequest("한국교통대학교 문학사", "충청북도 충주시", 36.96662987898937, 127.87232090960241, 1, 600));
         registerMoveStopService.registerMoveStop(new RegisterMoveStopRequest("한국교통대학교 중앙도서관", "충청북도 충주시", 36.967941962105705, 127.86972223749288, 1, 600));
