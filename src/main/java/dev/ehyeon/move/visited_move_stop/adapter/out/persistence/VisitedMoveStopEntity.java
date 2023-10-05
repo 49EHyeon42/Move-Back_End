@@ -20,11 +20,11 @@ public class VisitedMoveStopEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", unique = true)
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "move_stop_id")
+    @JoinColumn(name = "move_stop_id", unique = true)
     private MoveStopEntity moveStopEntity;
 
     private LocalDateTime dateOfLastVisit;

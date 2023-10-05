@@ -13,6 +13,7 @@ import dev.ehyeon.move.visited_move_stop.application.port.in.VisitedMoveStopRequ
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,7 +32,10 @@ public class VisitedMoveStopService {
     private final VisitedMoveStopRepository visitedMoveStopRepository;
 
     // TODO refactor
+    @Transactional
     public void saveOrUpdateVisitedMoveStop(String email, VisitedMoveStopRequest request) {
+        log.info(request.getLatitude1() + " " + request.getLongitude1() + " " + request.getLatitude2() + " " + request.getLongitude2());
+
         Member foundMember = memberRepository.findMemberByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -39,19 +43,23 @@ public class VisitedMoveStopService {
                 .findMoveStopByLatitudeBetweenAndLongitudeBetween(request.getLatitude1(), request.getLatitude2(), request.getLongitude1(), request.getLongitude2());
 
         for (MoveStopEntity foundMoveStopEntity : foundMoveStopEntities) {
+            log.info("사용자 주변 move stop : " + foundMoveStopEntity.getName());
+
             double distance = getDistanceInMeter(request.getMemberLatitude(), request.getMemberLongitude(), foundMoveStopEntity.getLatitude(), foundMoveStopEntity.getLongitude());
 
             if (distance <= 30) {
-                Optional<VisitedMoveStopEntity> visitedMoveStopOptional = visitedMoveStopRepository
-                        .findVisitedMoveStopByMemberIdAndMoveStopEntityId(foundMember.getId(), foundMoveStopEntity.getId());
+                boolean visited = visitedMoveStopRepository
+                        .existsVisitedMoveStopByMemberIdAndMoveStopEntityId(foundMember.getId(), foundMoveStopEntity.getId());
 
-                if (visitedMoveStopOptional.isPresent()) { // 방문 기록이 있다면
-                    LocalDateTime dateOfLastVisit = visitedMoveStopOptional.get().getDateOfLastVisit();
+                if (visited) { // 방문 기록이 있다면
+                    VisitedMoveStopEntity visitedMoveStopEntity = visitedMoveStopRepository
+                            .findVisitedMoveStopByMemberIdAndMoveStopEntityId(foundMember.getId(), foundMoveStopEntity.getId())
+                            .orElseThrow(IllegalArgumentException::new);
 
-                    if (dateOfLastVisit.plusHours(1).isBefore(LocalDateTime.now())) {
+                    if (visitedMoveStopEntity.getDateOfLastVisit().plusHours(1).isBefore(LocalDateTime.now())) {
                         log.info("사용자: " + email + ", 마지막 방문 + 1시간 이후 재방문: " + foundMoveStopEntity.getName());
 
-                        visitedMoveStopOptional.get().updateDateOfLastVisit(LocalDateTime.now());
+                        visitedMoveStopEntity.updateDateOfLastVisit(LocalDateTime.now());
                     } else {
                         log.info("사용자: " + email + ", 방문: " + foundMoveStopEntity.getName() + ", 등록 안됨");
                     }

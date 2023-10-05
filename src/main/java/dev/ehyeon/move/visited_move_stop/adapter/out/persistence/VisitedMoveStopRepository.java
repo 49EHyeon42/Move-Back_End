@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface VisitedMoveStopRepository extends JpaRepository<VisitedMoveStopEntity, Long> {
 
     Optional<VisitedMoveStopEntity> findVisitedMoveStopByMemberIdAndMoveStopEntityId(Long memberId, Long moveStopEntityId);
+
+    boolean existsVisitedMoveStopByMemberIdAndMoveStopEntityId(Long memberId, Long moveStopEntityId);
 }
