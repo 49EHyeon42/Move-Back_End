@@ -7,12 +7,15 @@ import dev.ehyeon.move.repository.MemberRepository;
 import dev.ehyeon.move.security.exception.MemberNotFoundException;
 import dev.ehyeon.move.visited_move_stop.adapter.out.persistence.VisitedMoveStopEntity;
 import dev.ehyeon.move.visited_move_stop.adapter.out.persistence.VisitedMoveStopRepository;
+import dev.ehyeon.move.visited_move_stop.application.port.in.SearchVisitedMoveStopRequest;
+import dev.ehyeon.move.visited_move_stop.application.port.in.SearchVisitedMoveStopResponse;
 import dev.ehyeon.move.visited_move_stop.application.port.in.VisitedMoveStopRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,5 +79,40 @@ public class VisitedMoveStopService {
 
     private double radianToDegree(double radian) {
         return (radian * 180 / Math.PI);
+    }
+
+    // TODO refactor
+    public List<SearchVisitedMoveStopResponse> searchVisitedMoveStop(String email, SearchVisitedMoveStopRequest request) {
+        Member foundMember = memberRepository.findMemberByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        List<SearchVisitedMoveStopResponse> responses = new ArrayList<>();
+
+        List<MoveStopEntity> foundMoveStopEntities = moveStopRepository
+                .findMoveStopByLatitudeBetweenAndLongitudeBetween(request.getLatitude1(), request.getLatitude2(), request.getLongitude1(), request.getLongitude2());
+
+        for (MoveStopEntity foundMoveStopEntity : foundMoveStopEntities) {
+            Optional<VisitedMoveStopEntity> visitedMoveStopEntityOptional = visitedMoveStopRepository
+                    .findVisitedMoveStopByMemberIdAndMoveStopEntityId(foundMember.getId(), foundMoveStopEntity.getId());
+
+            if (visitedMoveStopEntityOptional.isEmpty()) {
+                responses.add(new SearchVisitedMoveStopResponse(foundMoveStopEntity.getName(),
+                        foundMoveStopEntity.getLatitude(), foundMoveStopEntity.getLongitude(), false));
+            } else {
+                VisitedMoveStopEntity visitedMoveStopEntity = visitedMoveStopEntityOptional.get();
+
+                if (visitedMoveStopEntity.getDateOfLastVisit().plusHours(1).isBefore(LocalDateTime.now())) {
+                    // 1시간 이전
+                    responses.add(new SearchVisitedMoveStopResponse(foundMoveStopEntity.getName(),
+                            foundMoveStopEntity.getLatitude(), foundMoveStopEntity.getLongitude(), false));
+                } else {
+                    // 1시간 이후
+                    responses.add(new SearchVisitedMoveStopResponse(foundMoveStopEntity.getName(),
+                            foundMoveStopEntity.getLatitude(), foundMoveStopEntity.getLongitude(), true));
+                }
+            }
+        }
+
+        return responses;
     }
 }
