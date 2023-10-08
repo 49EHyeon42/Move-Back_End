@@ -47,17 +47,15 @@ public class VisitedMoveStopService {
 
             double distance = getDistanceInMeter(request.getMemberLatitude(), request.getMemberLongitude(), foundMoveStopEntity.getLatitude(), foundMoveStopEntity.getLongitude());
 
-            if (distance <= 30) {
-                boolean visited = visitedMoveStopRepository
-                        .existsVisitedMoveStopByMemberIdAndMoveStopEntityId(foundMember.getId(), foundMoveStopEntity.getId());
+            if (distance <= 35) {
+                Optional<VisitedMoveStopEntity> foundVisitedMoveStopEntityOptional = visitedMoveStopRepository
+                        .findVisitedMoveStopByMemberIdAndMoveStopEntityId(foundMember.getId(), foundMoveStopEntity.getId());
 
-                if (visited) { // 방문 기록이 있다면
-                    VisitedMoveStopEntity visitedMoveStopEntity = visitedMoveStopRepository
-                            .findVisitedMoveStopByMemberIdAndMoveStopEntityId(foundMember.getId(), foundMoveStopEntity.getId())
-                            .orElseThrow(IllegalArgumentException::new);
+                if (foundVisitedMoveStopEntityOptional.isPresent()) { // 방문 기록이 있다면
+                    VisitedMoveStopEntity visitedMoveStopEntity = foundVisitedMoveStopEntityOptional.get();
 
-                    if (visitedMoveStopEntity.getDateOfLastVisit().plusHours(1).isBefore(LocalDateTime.now())) {
-                        log.info("사용자: " + email + ", 마지막 방문 + 1시간 이후 재방문: " + foundMoveStopEntity.getName());
+                    if (visitedMoveStopEntity.getDateOfLastVisit().plusMinutes(1).isBefore(LocalDateTime.now())) {
+                        log.info("사용자: " + email + ", 마지막 방문 + 1분 이후 재방문: " + foundMoveStopEntity.getName());
 
                         visitedMoveStopEntity.updateDateOfLastVisit(LocalDateTime.now());
                     } else {
@@ -66,7 +64,11 @@ public class VisitedMoveStopService {
                 } else { // 첫 방문
                     log.info("사용자: " + email + ", 첫 방문: " + foundMoveStopEntity.getName());
 
-                    visitedMoveStopRepository.save(new VisitedMoveStopEntity(foundMember, foundMoveStopEntity, LocalDateTime.now()));
+                    // 2번 저장되서
+                    if (!visitedMoveStopRepository
+                            .existsVisitedMoveStopByMemberIdAndMoveStopEntityId(foundMember.getId(), foundMoveStopEntity.getId())) {
+                        visitedMoveStopRepository.save(new VisitedMoveStopEntity(foundMember, foundMoveStopEntity, LocalDateTime.now()));
+                    }
                 }
             } else {
                 log.info(foundMoveStopEntity.getName() + ", distance:" + distance);
@@ -109,7 +111,7 @@ public class VisitedMoveStopService {
             } else {
                 VisitedMoveStopEntity visitedMoveStopEntity = visitedMoveStopEntityOptional.get();
 
-                if (visitedMoveStopEntity.getDateOfLastVisit().plusHours(1).isBefore(LocalDateTime.now())) {
+                if (visitedMoveStopEntity.getDateOfLastVisit().plusMinutes(1).isBefore(LocalDateTime.now())) {
                     // 1시간 이전
                     responses.add(new SearchVisitedMoveStopResponse(foundMoveStopEntity.getName(),
                             foundMoveStopEntity.getLatitude(), foundMoveStopEntity.getLongitude(), false));
