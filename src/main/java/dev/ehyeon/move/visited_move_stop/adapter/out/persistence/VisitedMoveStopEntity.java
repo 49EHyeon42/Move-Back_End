@@ -26,7 +26,7 @@ public class VisitedMoveStopEntity {
     private Member member;
 
     @MapsId("moveStopEntityId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "move_stop_id")
     private MoveStopEntity moveStopEntity;
 

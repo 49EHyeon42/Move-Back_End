@@ -54,7 +54,8 @@ public class VisitedMoveStopService {
                 if (foundVisitedMoveStopEntityOptional.isPresent()) { // 방문 기록이 있다면
                     VisitedMoveStopEntity visitedMoveStopEntity = foundVisitedMoveStopEntityOptional.get();
 
-                    if (visitedMoveStopEntity.getDateOfLastVisit().plusMinutes(1).isBefore(LocalDateTime.now())) {
+                    if (visitedMoveStopEntity.getDateOfLastVisit()
+                            .plusMinutes(visitedMoveStopEntity.getMoveStopEntity().getCooldownTime()).isBefore(LocalDateTime.now())) {
                         log.info("사용자: " + email + ", 마지막 방문 + 1분 이후 재방문: " + foundMoveStopEntity.getName());
 
                         visitedMoveStopEntity.updateDateOfLastVisit(LocalDateTime.now());
@@ -64,7 +65,7 @@ public class VisitedMoveStopService {
                 } else { // 첫 방문
                     log.info("사용자: " + email + ", 첫 방문: " + foundMoveStopEntity.getName());
 
-                    // 2번 저장되서
+                    // 2번 저장되서 다시 조회
                     if (!visitedMoveStopRepository
                             .existsVisitedMoveStopByMemberIdAndMoveStopEntityId(foundMember.getId(), foundMoveStopEntity.getId())) {
                         visitedMoveStopRepository.save(new VisitedMoveStopEntity(foundMember, foundMoveStopEntity, LocalDateTime.now()));
@@ -111,12 +112,11 @@ public class VisitedMoveStopService {
             } else {
                 VisitedMoveStopEntity visitedMoveStopEntity = visitedMoveStopEntityOptional.get();
 
-                if (visitedMoveStopEntity.getDateOfLastVisit().plusMinutes(1).isBefore(LocalDateTime.now())) {
-                    // 1시간 이전
+                if (visitedMoveStopEntity.getDateOfLastVisit()
+                        .plusMinutes(visitedMoveStopEntity.getMoveStopEntity().getCooldownTime()).isBefore(LocalDateTime.now())) {
                     responses.add(new SearchVisitedMoveStopResponse(foundMoveStopEntity.getName(),
                             foundMoveStopEntity.getLatitude(), foundMoveStopEntity.getLongitude(), false));
                 } else {
-                    // 1시간 이후
                     responses.add(new SearchVisitedMoveStopResponse(foundMoveStopEntity.getName(),
                             foundMoveStopEntity.getLatitude(), foundMoveStopEntity.getLongitude(), true));
                 }
