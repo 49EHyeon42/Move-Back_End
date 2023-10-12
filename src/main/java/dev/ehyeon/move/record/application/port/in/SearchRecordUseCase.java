@@ -6,4 +6,6 @@ import java.util.List;
 public interface SearchRecordUseCase {
 
     List<SearchRecordResponse> searchRecordByMemberEmailAndLocalDateTimeBetween(String memberEmail, LocalDateTime from, LocalDateTime to);
+
+    SearchTotalRecordResponse searchTotalRecordResponse(String memberEmail);
 }

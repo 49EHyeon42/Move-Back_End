@@ -3,6 +3,7 @@ package dev.ehyeon.move.record.application.service;
 import dev.ehyeon.move.entity.Member;
 import dev.ehyeon.move.record.application.port.in.SearchRecordResponse;
 import dev.ehyeon.move.record.application.port.in.SearchRecordUseCase;
+import dev.ehyeon.move.record.application.port.in.SearchTotalRecordResponse;
 import dev.ehyeon.move.record.application.port.out.SearchRecordPort;
 import dev.ehyeon.move.record.domain.Record;
 import dev.ehyeon.move.repository.MemberRepository;
@@ -32,6 +33,26 @@ public class SearchRecordService implements SearchRecordUseCase {
         return foundRecords.stream()
                 .map(this::mapRecordToSearchRecordResponse)
                 .collect(Collectors.toList());
+    }
+
+    public SearchTotalRecordResponse searchTotalRecordResponse(String memberEmail) {
+        Member foundMember = memberRepository.findMemberByEmail(memberEmail)
+                .orElseThrow(MemberNotFoundException::new);
+
+        List<Record> foundRecords = searchRecordPort
+                .searchRecordByMemberAndLocalDateTimeBetween(foundMember,
+                        LocalDateTime.of(2000, 1, 1, 0, 0),
+                        LocalDateTime.now());
+
+        int totalTravelDistance = 0;
+        int step = 0;
+
+        for (Record foundRecord : foundRecords) {
+            totalTravelDistance += foundRecord.getTotalTravelDistance();
+            step += foundRecord.getStep();
+        }
+
+        return new SearchTotalRecordResponse(foundMember.getMileage(), totalTravelDistance, step);
     }
 
     private SearchRecordResponse mapRecordToSearchRecordResponse(Record record) {

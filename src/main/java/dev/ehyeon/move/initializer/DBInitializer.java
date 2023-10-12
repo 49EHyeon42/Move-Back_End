@@ -4,11 +4,14 @@ import dev.ehyeon.move.entity.Member;
 import dev.ehyeon.move.entity.Role;
 import dev.ehyeon.move.move_stop.application.port.in.RegisterMoveStopRequest;
 import dev.ehyeon.move.move_stop.application.service.RegisterMoveStopService;
+import dev.ehyeon.move.record.adapter.out.persistence.RecordEntity;
+import dev.ehyeon.move.record.adapter.out.persistence.RecordRepository;
 import dev.ehyeon.move.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -17,11 +20,23 @@ public class DBInitializer {
     private final RegisterMoveStopService registerMoveStopService;
 
     private final MemberRepository memberRepository;
+    private final RecordRepository recordRepository;
 
     @PostConstruct
     public void postConstruct() {
-        memberRepository.save(new Member("qa@domain.com", "$2a$10$BprIgyxGevnVlQmGSUVtjuZT7vSBc7MxlvpUTZFBz9AxXmW3sL0ie", Role.MEMBER));
+        Member savedMember = memberRepository.save(new Member("qa@domain.com", "$2a$10$BprIgyxGevnVlQmGSUVtjuZT7vSBc7MxlvpUTZFBz9AxXmW3sL0ie", Role.MEMBER));
+        savedMember.addMileage(15);
+
+        savedMember = memberRepository.save(savedMember);
+
         memberRepository.save(new Member("qa2@domain.com", "$2a$10$TjvvT6xN97m1tm9Z8XTGKu4uRLPxXLQK.doIcRnVzKyhZGuyIhuJy", Role.MEMBER));
+
+        recordRepository.save(new RecordEntity(savedMember, LocalDateTime.of(2023, 9, 1, 0, 0), 1, 1, 1, 1, 1));
+        recordRepository.save(new RecordEntity(savedMember, LocalDateTime.of(2023, 9, 3, 0, 0), 1, 1, 1, 1, 1));
+        recordRepository.save(new RecordEntity(savedMember, LocalDateTime.of(2023, 9, 5, 0, 0), 1, 1, 1, 1, 1));
+        recordRepository.save(new RecordEntity(savedMember, LocalDateTime.of(2023, 9, 5, 1, 0), 2, 2, 2, 2, 2));
+        recordRepository.save(new RecordEntity(savedMember, LocalDateTime.of(2023, 9, 30, 1, 0), 100, 100, 7, 100, 100));
+        recordRepository.save(new RecordEntity(savedMember, LocalDateTime.of(2023, 9, 30, 2, 0), 200, 200, 5, 601, 250));
 
         registerMoveStopService.registerMoveStop(new RegisterMoveStopRequest("한국교통대학교 문학사", "충청북도 충주시", 36.96662987898937, 127.87232090960241, 1, 1));
         registerMoveStopService.registerMoveStop(new RegisterMoveStopRequest("한국교통대학교 중앙도서관", "충청북도 충주시", 36.967941962105705, 127.86972223749288, 1, 1));

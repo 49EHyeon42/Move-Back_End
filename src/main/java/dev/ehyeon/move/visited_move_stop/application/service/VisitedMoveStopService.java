@@ -59,6 +59,8 @@ public class VisitedMoveStopService {
                         log.info("사용자: " + email + ", 마지막 방문 + 1분 이후 재방문: " + foundMoveStopEntity.getName());
 
                         visitedMoveStopEntity.updateDateOfLastVisit(LocalDateTime.now());
+
+                        foundMember.addMileage(foundMoveStopEntity.getEarnMileage());
                     } else {
                         log.info("사용자: " + email + ", 방문: " + foundMoveStopEntity.getName() + ", 등록 안됨");
                     }
@@ -69,6 +71,8 @@ public class VisitedMoveStopService {
                     if (!visitedMoveStopRepository
                             .existsVisitedMoveStopByMemberIdAndMoveStopEntityId(foundMember.getId(), foundMoveStopEntity.getId())) {
                         visitedMoveStopRepository.save(new VisitedMoveStopEntity(foundMember, foundMoveStopEntity, LocalDateTime.now()));
+
+                        foundMember.addMileage(foundMoveStopEntity.getEarnMileage());
                     }
                 }
             } else {
