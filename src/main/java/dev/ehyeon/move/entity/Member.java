@@ -23,9 +23,16 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private int mileage;
+
     public Member(String email, String password, Role role) {
         this.email = email;
         this.password = password;
         this.role = role;
+        mileage = 0;
+    }
+
+    public void addMileage(int mileage) {
+        this.mileage += mileage;
     }
 }
